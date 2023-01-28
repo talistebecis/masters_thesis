@@ -1,9 +1,10 @@
 ---
-title: "Austrian GHG Emissions"
+title: "Attributing policies to reductions in Austrian GHG emissions"
 author: "Talis Tebecis"
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
+  pdf_document:
+    df_print: kable
 ---
 
 ```{r setup, include=FALSE}
@@ -22,7 +23,7 @@ pacman::p_load(ggpubr)
 
 ## Motivation
 
-I seek to replicate the work of Koch et al. (2022) in *Attributing agnostically-detected large reductions in road CO2 emissions to policy mixes*, applying their 'causes-of-effects' searching method to determine effective emissions-reduction policy mixes across all sectors. I will then focus on the Austrian context to find effective policy mixes, in the context of informing the Climate Plan for Austria.
+I seek to replicate the work of Koch et al. (2022) in *Attributing agnostically-detected large reductions in road* $CO_2$*emissions to policy mixes*, applying their 'causes-of-effects' searching method to determine effective emissions-reduction policy mixes across all sectors. I will then focus on the Austrian context to find effective policy mixes, in the context of informing the Climate Plan for Austria.
 
 ## Austrian emissions: an exploration
 
@@ -59,11 +60,12 @@ ggarrange(plot1, plot2,
           ncol = 2,
           nrow = 1)
 ```
+
 Here, we can see significant variation in Austria's emissions, both upwards and downwards since 1970. In order to determine effective policy interventions to reduce emissions, we must consider emissions at the sectoral level.
 
 \newpage
 
-Thus, I explore the emissions per capita time series plots for all different IPCC Emissions categories. These are based on the 2006 IPCC emissions categories.
+Thus, I explore the emissions per capita time series plots for all different IPCC Emissions categories. These are based on the 2006 IPCC emissions categorization guidelines.
 
 ```{r, echo=FALSE, fig.height = 6, fig.width = 12}
 ggplot(data = subset(data_full, country == "Austria")) +
@@ -81,7 +83,7 @@ We can see here that the IPCC categories with the highest emissions for Austria 
 -   Manufacturing Industries and Construction
 -   Petroleum Refining - Manufacture of Solid Fuels and Other Energy Industries
 -   Road Transportation
--   Other Sectors, which refers to Fuel Combustion Activities from the Commercial/Institutional, Residential and Agriculture/Forestry/Fishing/Fish Farms sectors.
+-   Other Sectors, which refers to Fuel Combustion Activities from the "Commercial/Institutional", "Residential" and "Agriculture/Forestry/Fishing/Fish Farms" sectors.
 
 Next, I explore the variation in the time series by taking the log of per capita emissions and re-plotting the time series. I also allow the scale to vary between charts to see the individual variation in the plots.
 
@@ -95,15 +97,16 @@ ggplot(data = subset(data_full, country == "Austria")) +
   theme(axis.text = element_text(size = 6))
 ```
 
-From this analysis, we can see that there are significant variations in the emissions of all sectors. Thus, I conclude that it is worth evaluating structural breaks in emissions for all sectors for Austria. However, given the relatively large magnitude of the energy and heat, manufacturing and construction, refining, transport and other sectors, I will focus the policy evaluation in these sectors.
+From this analysis, we can see that there are significant variations in the emissions of all sectors. Thus, I conclude that it is worth evaluating structural breaks in emissions for all sectors for Austria. However, given the relatively large magnitude of the energy and heat, manufacturing and construction, refining, transport and other sectors, we should remember that emissions reductions in these sectors should be the focus, and not necessarily large relative emissions in low-emissions sectors.
 
-\newpage
 
-## Identifying Structural Breaks
+## Identifying structural breaks
 
 I follow the reverse causal approach of Koch et al. (2022) to identify structural breaks in the emissions per capita for each sector, which are not accounted for by changes in population or GDP per capita. I largely replicate the code of the original authors, but I have adjusted the dataset creation to account for all sectors, and have written a for-loop to iterate the process over all sectors and save the output accordingly.
 
-I provide the code here for reference. Not,e, this takes a number of hours to execute. Also note, the "IPCC 2006 Categories" data is not in the original source code, and I have created this table based on the 2006 IPCC guidelines.
+I provide my code here for reference. Note, this takes a number of hours to execute. Also note, the "IPCC 2006 Categories" data is not in the original source code, and I have created this table based on the 2006 IPCC guidelines to make the categories more understandable (e.g. Road Transportation, instead of 1.A.3.b). The table also breaks the categories down into four layers of categorisation, potentially allowing for higher levels of granularity in assessing emissions reductions, for example, examining the Mineral Industry as a whole rather than cement, lime, glass and other carbonates separately.
+
+The data and code are available at: <https://github.com/talistebecis/masters_thesis.git>.
 
 ```{r, eval = FALSE}
 # Setup ----------------------------------------------------------------
@@ -232,3 +235,99 @@ for(IPCC_code in 1:23){
 }
 
 ```
+
+This allowed me to identify structural breaks for all country-year pairs in all IPCC Categories, except for Oil and Natural Gas, which produced the error, "Error in if (ar.LjungBox\$p.value \<= ar.LjungB[2]) { :missing value where TRUE/FALSE needed". As this was a relatively insignificant variable for Austria, I have not followed up on this yet.
+
+
+## Structural breaks for Austria
+
+I then collated the relevant results for Austria - everywhere a structural break was identified, whether it was positive or negative. This table shows the negative structural breaks, i.e. the emissions reductions not accounted for by reductions in GDP per capita or population.
+
+```{r, echo=FALSE}
+results <- read.csv("Data/03 Output_data/AUT_results.csv")
+negative_breaks <- results %>% 
+  filter(coef <= 0) %>%
+  select(category, sample, p.value.test, year, coef, Signif.) %>% 
+  rename(p.value = p.value.test)
+negative_breaks
+```
+
+We can see that only six negative breaks were detected for Austria across the two sample groups through this detection process:
+
+-   2009: Incineration and Open Burning of Waste
+-   2010: Incineration and Open Burning of Waste
+-   2006: Lime Production
+-   2014: Water-borne Navigation
+-   2015: Water-borne Navigation
+-   2016: Water-borne Navigation
+
+Given the very close proximity of the Incineration and Open Burning of Waste and Water-borne Navigation breaks, it is likely that there are only 3 true structural breaks in the negative direction. I could do more testing here, using a dummy variable of more than 1 year for these breaks. I believe Koch et al. (2022) do something similar when they refer to Confidence Intervals, but it is not yet clear to me from their code or paper.
+
+For completeness, I also include the positive structural breaks for Austria, of which there are 55, significantly more than the negative ones. These were omitted from the initial analysis of Koch et al. (2022), so I omit these from the attribution of policies for now.
+
+```{r, echo=F}
+positive_breaks <- results %>% 
+  filter(coef > 0) %>%
+  select(category, sample, p.value.test, year, coef, Signif.) %>% 
+  rename(p.value = p.value.test)
+positive_breaks
+```
+
+It is relevant to note that two of the IPCC Categories that we identified as being the largest emitters for Austria were included in the positive structural breaks:
+
+-   Main Activity Electricity and Heat Production: 2003 and 2008
+-   Road Transportation: 2001, 2002 and 2013
+
+It could be worth analysing these upward breaks, perhaps to evaluate ineffective policies or unintended consequences from policies that could have caused the upward variation. For now, I have not pursued this line of thought.
+
+
+## Attirbution to policies
+
+I seek to attribute the negative structural breaks to policies or policy mixes as a means of testing policy effectiveness, using the following databases:
+
+1.    **The IEA's Policies and Measures Database**: past, existing, or planned climate and energy policies. Data is collected from governments, international organisations, and IEA analyses, and governments can review the provided information periodically.
+2.    **IEA/IRENA Renewable Energy Policies and Measures Database**: a joint database of renewable energy policies and measures of the IEA and IRENA.
+3.    **The National Communications to the UNFCCC secretariat**: obligatory for our sample countries to submit regularly. Note, while this was used in the original paper, I am yet to see exactly how to identify individual policies from this database.
+4.    **Other potential resources**: the World Bank's Carbon Pricing Dashboard that provides detailed information on carbon prices, and the Climate Change Laws of the World database of the Grantham Research Institute.
+
+In the following, I try to attribute the negative structural breaks to policies implemented in those countries, and affecting the relevant sector, in the year of or years leading up to the break. Note, this is done on an ad hoc and manual basis, one structural break at a time. I have also only used resources (1) and (2) from the above list so far.
+
+
+### Incineration and Open Burning of Waste
+
+The reduction in emissions from Incineration and Open Burning of Waste in 2009/2010 could be explained by the following policies which had an element associated with waste reduction in the same period.
+
+-   klima:aktiv Climate Strategy 2008 - 2012
+-   Ökostromverordnung 2009 (2009 feed-in tariffs for green electricity)
+-   Ökostromverordnung (feed-in tariffs) 2010 - ÖSVO 2010
+
+
+### Lime Production
+
+The reduction in Lime Production in 2006 could be associated with:
+
+-   Emission Trading System implemented in 2005, which affected mineral industries
+
+
+### Water-borne Navigation
+
+The reduction in Water-borne Navigation emission between 2014 and 2016 could be associated with:
+
+-   (I have been unable to attribute a policy to this so far)
+
+Once again, I note that these analyses so far only consider negative structural shocks in emissions, and that it could be worth looking at positive structural shocks.
+
+
+## Open questions and actions
+
+My analysis is still preliminary and I have not conducted robustness checks. I have a number of open questions and/or actions that I need to take:
+
+-   Should I aggregate industries at a higher level and repeat the analysis?
+-   Is it worth looking at upward structural breaks rather than just negative?
+-   How can I more systematically attribute policy mixes to breaks?
+-   Can I improve the structural breaks estimation technique using Bayesian methods? This would be compared to the TWFE model with machine learning (the 'gets' algorithm for shrinkage) to make the model sparse.
+-   How do I replicate the confidence intervals around country-time pairs that the original authors used?
+-   How do I interpret the coefficients? What about values above 1.00 or below -1.00?
+-   What other useful policy databases are there?
+-   Should I update to EDGAR v7 (currently v5) to get more recent emissions data up to 2021? Or will covid mess with the analysis?
+
