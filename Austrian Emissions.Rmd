@@ -33,7 +33,7 @@ First, I visualise the overall emissions of Austria to explore potential structu
 emissions_codes <- read.csv("Data/01 Source_data/IPCC 2006 Categories.csv") %>% 
   select(IPCC, IPCC_description)
 
-data_full <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset.csv") %>% 
+data_full <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022.csv") %>% 
   left_join(emissions_codes,
             by = c("category" = "IPCC")) %>% 
   filter(!is.na(lemissions_pc))
@@ -109,16 +109,19 @@ I provide my code here for reference. Note, this takes a number of hours to exec
 The data and code are available at: <https://github.com/talistebecis/masters_thesis.git>.
 
 ```{r, eval = FALSE}
-# Setup ----------------------------------------------------------------
+# Setup -------------------------------------------------------
+
+rm(list=ls())
+set.seed(1230)
 
 #import data
-data_full <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset.csv")
+data_full <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022.csv")
 
 #Group specification
 EU15 <- c("Austria", "Belgium", "Germany", "Denmark", "Spain", "Finland",
           "France", "United Kingdom", "Ireland", "Italy", "Luxembourg", 
           "Netherlands", "Greece", "Portugal", "Sweden")
-EU16 <- c("Croatia", "Bulgaria", "Cyprus","Czech Republic", "Estonia", 
+EU16 <- c("Croatia", "Bulgaria", "Cyprus", "Czechia", "Estonia", 
           "Hungary", "Lithuania", "Latvia", "Malta", "Poland", "Romania", 
           "Slovak Republic", "Slovenia", "Switzerland", "Iceland", 
           "Norway")
@@ -131,17 +134,18 @@ emissions_codes <- read.csv("Data/01 Source_data/IPCC 2006 Categories.csv") %>%
 categories <- read.csv("Data/01 Source_data/IPCC 2006 Categories.csv") %>% 
   select(IPCC_description)
 
+
 # Analysis ----------------------------------------------------------------
 
 #run loop over all variables to produce results for all IPCC categories
-for(IPCC_code in 1:23){
+for(IPCC_code in 15:24){
   
   #set IPCC code and category
   emissions_code <- emissions_codes[IPCC_code,]
   emissions_category <- categories[IPCC_code,]
   
   #set up document
-  file_name <- paste0("Data/03 Output_data/",emissions_category)
+  file_name <- paste0("Data/03 Output_data/2022/",emissions_category)
   
   #filter data
   data <- data_full %>% 
@@ -233,7 +237,6 @@ for(IPCC_code in 1:23){
     }
   }
 }
-
 ```
 
 This allowed me to identify structural breaks for all country-year pairs in all IPCC Categories, except for Oil and Natural Gas, which produced the error, "Error in if (ar.LjungBox\$p.value \<= ar.LjungB[2]) { :missing value where TRUE/FALSE needed". As this was a relatively insignificant variable for Austria, I have not followed up on this yet.
@@ -244,7 +247,7 @@ This allowed me to identify structural breaks for all country-year pairs in all 
 I then collated the relevant results for Austria - everywhere a structural break was identified, whether it was positive or negative. This table shows the negative structural breaks, i.e. the emissions reductions not accounted for by reductions in GDP per capita or population.
 
 ```{r, echo=FALSE}
-results <- read.csv("Data/03 Output_data/AUT_results.csv")
+results <- read.csv("Data/03 Output_data/AUT_results_2022.csv")
 negative_breaks <- results %>% 
   filter(coef <= 0) %>%
   select(category, sample, p.value.test, year, coef, Signif.) %>% 
@@ -252,14 +255,13 @@ negative_breaks <- results %>%
 negative_breaks
 ```
 
-We can see that only six negative breaks were detected for Austria across the two sample groups through this detection process:
+We can see that only five negative breaks were detected for Austria across the two sample groups through this detection process:
 
 -   2009: Incineration and Open Burning of Waste
--   2010: Incineration and Open Burning of Waste
 -   2006: Lime Production
--   2014: Water-borne Navigation
--   2015: Water-borne Navigation
--   2016: Water-borne Navigation
+-   2006: Water-borne Navigation
+-   2007: Water-borne Navigation
+-   2015: Petroleum Refining - Manufacture of Solid Fuels and Other Energy Industries
 
 Given the very close proximity of the Incineration and Open Burning of Waste and Water-borne Navigation breaks, it is likely that there are only 3 true structural breaks in the negative direction. I could do more testing here, using a dummy variable of more than 1 year for these breaks. I believe Koch et al. (2022) do something similar when they refer to Confidence Intervals, but it is not yet clear to me from their code or paper.
 
@@ -322,12 +324,22 @@ Once again, I note that these analyses so far only consider negative structural 
 
 My analysis is still preliminary and I have not conducted robustness checks. I have a number of open questions and/or actions that I need to take:
 
--   Should I aggregate industries at a higher level and repeat the analysis?
--   Is it worth looking at upward structural breaks rather than just negative?
--   How can I more systematically attribute policy mixes to breaks?
--   Can I improve the structural breaks estimation technique using Bayesian methods? This would be compared to the TWFE model with machine learning (the 'gets' algorithm for shrinkage) to make the model sparse.
--   How do I replicate the confidence intervals around country-time pairs that the original authors used?
--   How do I interpret the coefficients? What about values above 1.00 or below -1.00?
--   What other useful policy databases are there?
--   Should I update to EDGAR v7 (currently v5) to get more recent emissions data up to 2021? Or will covid mess with the analysis?
+-   Should I aggregate industries at a higher level and repeat the analysis? Yes, to level 2 and 3
+-   Is it worth looking at upward structural breaks rather than just negative? Nope, just down
+-   How can I more systematically attribute policy mixes to breaks? This is poetry.
+-   Can I improve the structural breaks estimation technique using Bayesian methods? This would be compared to the TWFE model with machine learning (the 'gets' algorithm for shrinkage) to make the model sparse. Yes, after the Masters Thesis
+  -   Confirm gets package is using point and not step breaks (read Oxford GETS paper)
+-   How do I replicate the confidence intervals around country-time pairs that the original authors used? Ask Anne and Lucas
+-   How do I interpret the coefficients? What about values above 1.00 or below -1.00? Counterfactual
+-   What other useful policy databases are there? Austrian government websites
+-   Should I update to EDGAR v7 (currently v5) to get more recent emissions data up to 2021? Or will covid mess with the analysis? Yes
 
+
+## Next Steps
+
+-   DONE: Update to 2021 data (note, 2021 data includes breakdown between fossil fuels and biofuels. We only consider fossil fuels in analysis)
+-   DONE: Omit positive breaks
+-   DONE Repeat analysis with sectors aggregated at Level 2 and Level 3
+
+-   Further policy attribution - look at Austrian sources
+-   CONTACTED: Confidence intervals - ask Lucas or Anne

@@ -34,7 +34,7 @@ for(IPCC_code in 1:23){
   emissions_category <- categories[IPCC_code,]
   
   #set up document
-  file_name <- paste0("Data/03 Output_data/",emissions_category)
+  file_name <- paste0("Data/03 Output_data/2018/",emissions_category)
   
   #filter data
   data <- data_full %>% 

@@ -12,7 +12,7 @@ pacman::p_load(getspanel)
 pacman::p_load(here)
 pacman::p_load(ggplot2)
 
-# call skripts
+# call scripts
 # data assembly
 # source("01 Dataset_creation.R")
 
