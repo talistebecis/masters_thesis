@@ -1,0 +1,28 @@
+﻿category,sample,p-value test,country,year,coef,std.error,t-stat,p-value,Signif.
+"Agriculture, Forestry, and Other Land Use",EU15 ,0.05,Austria,2008,0.514586,0.057095,9.0128,2.20E-16,***
+"Agriculture, Forestry, and Other Land Use",EU15 ,0.01,Austria,2001,0.486064,0.080017,6.0745,3.76E-09,***
+"Agriculture, Forestry, and Other Land Use",EU15 ,0.01,Austria,2008,0.55208,0.067513,8.1773,8.28E-15,***
+"Agriculture, Forestry, and Other Land Use",EU15 ,0.001,Austria,2008,0.770565,0.062696,12.2904,2.20E-16,***
+"Agriculture, Forestry, and Other Land Use",EU31 ,0.05,Austria,2004,0.70771,0.07235,9.7817,2.20E-16,***
+"Agriculture, Forestry, and Other Land Use",EU31 ,0.01,Austria,2004,0.761443,0.079096,9.6268,2.20E-16,***
+"Agriculture, Forestry, and Other Land Use",EU31 ,0.001,Austria,2004,0.761494,0.086709,8.7821,2.20E-16,***
+Energy,EU15 ,0.05,Austria,2003,0.109162,0.017641,6.1879,4.46E-09,***
+Energy,EU15 ,0.05,Austria,2017,0.073187,0.017768,4.1189,5.95E-05,***
+Energy,EU15 ,0.01,Austria,2003,0.1131183,0.0230396,4.9097,2.04E-06,***
+Energy,EU15 ,0.01,Austria,2017,0.0890266,0.0229045,3.8869,0.0001426,***
+Energy,EU15 ,0.001,Austria,2017,0.083952,0.024459,3.4324,0.0007415,***
+Energy,EU31 ,0.05,Austria,2003,0.122368,0.018723,6.5358,2.76E-10,***
+Energy,EU31 ,0.05,Austria,2019,0.08522,0.022373,3.8091,0.0001696,***
+Energy,EU31 ,0.01,Austria,2003,0.080058,0.023264,3.4413,0.0006553,***
+Energy,EU31 ,0.001,Austria,2003,0.1086191,0.0232579,4.6702,4.42E-06,***
+Industrial Processes and Product Use,EU15 ,0.05,Austria,2001,0.135748,0.019719,6.8841,3.91E-11,***
+Industrial Processes and Product Use,EU15 ,0.05,Austria,2015,0.094664,0.019058,4.9672,1.19E-06,***
+Industrial Processes and Product Use,EU15 ,0.01,Austria,2001,0.151644,0.023123,6.5581,2.51E-10,***
+Industrial Processes and Product Use,EU15 ,0.001,Austria,2001,0.147219,0.026335,5.5902,5.14E-08,***
+Industrial Processes and Product Use,EU31 ,0.05,Austria,2009,0.141964,0.023217,6.1145,1.83E-09,***
+Waste,EU15 ,0.05,Austria,2009,-1.430338,0.103295,-13.8471,2.20E-16,***
+Waste,EU15 ,0.01,Austria,2009,-1.549998,0.111546,-13.8957,2.20E-16,***
+Waste,EU15 ,0.001,Austria,2009,-1.646822,0.14108,-11.673,2.20E-16,***
+Waste,EU31 ,0.05,Austria,2009,-1.390561,0.1086211,-12.8019,2.20E-16,***
+Waste,EU31 ,0.01,Austria,2009,-1.494903,0.131202,-11.3939,2.20E-16,***
+Waste,EU31 ,0.001,Austria,2009,-1.536252,0.147548,-10.4119,2.20E-16,***

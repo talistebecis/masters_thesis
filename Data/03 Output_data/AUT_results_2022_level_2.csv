@@ -1,0 +1,45 @@
+﻿category,sample,p-value test,country,year,coef,std.error,t-stat,p-value,Signif.
+Aggregate sources and non-CO2 emissions sources on land,EU15 ,0.05,Austria,2008,0.514586,0.057095,9.0128,2.20E-16,***
+Aggregate sources and non-CO2 emissions sources on land,EU15 ,0.01,Austria,2001,0.486064,0.080017,6.0745,3.76E-09,***
+Aggregate sources and non-CO2 emissions sources on land,EU15 ,0.01,Austria,2008,0.55208,0.067513,8.1773,8.28E-15,***
+Aggregate sources and non-CO2 emissions sources on land,EU15 ,0.001,Austria,2008,0.770565,0.062696,12.2904,2.20E-16,***
+Aggregate sources and non-CO2 emissions sources on land,EU31 ,0.05,Austria,2004,0.70771,0.07235,9.7817,2.20E-16,***
+Aggregate sources and non-CO2 emissions sources on land,EU31 ,0.01,Austria,2004,0.761443,0.079096,9.6268,2.20E-16,***
+Aggregate sources and non-CO2 emissions sources on land,EU31 ,0.001,Austria,2004,0.761494,0.086709,8.7821,2.20E-16,***
+Fuel Combustion Activities,EU15 ,0.05,Austria,2003,0.144123,0.021621,6.6658,2.81E-10,***
+Fuel Combustion Activities,EU15 ,0.05,Austria,2015,0.08223,0.021715,3.7868,0.0002049,***
+Fuel Combustion Activities,EU15 ,0.01,Austria,2003,0.152005,0.022468,6.7652,1.34E-10,***
+Fuel Combustion Activities,EU15 ,0.01,Austria,2015,0.088158,0.022638,3.8942,0.0001329,***
+Fuel Combustion Activities,EU15 ,0.001,Austria,2003,0.1473654,0.0249336,5.9103,1.42E-08,***
+Fuel Combustion Activities,EU15 ,0.001,Austria,2015,0.1119993,0.0246969,4.535,9.82E-06,***
+Fuel Combustion Activities,EU31 ,0.05,Austria,2002,0.1410349,0.021613,6.5255,2.19E-10,***
+Fuel Combustion Activities,EU31 ,0.05,Austria,2015,0.0932249,0.0205716,4.5317,7.87E-06,***
+Fuel Combustion Activities,EU31 ,0.01,Austria,2002,0.1443628,0.0232029,6.2218,1.26E-09,***
+Fuel Combustion Activities,EU31 ,0.01,Austria,2015,0.0996604,0.0220301,4.5238,8.04E-06,***
+Fuel Combustion Activities,EU31 ,0.001,Austria,2002,0.1675365,0.0254349,6.5869,1.40E-10,***
+Fuel Combustion Activities,EU31 ,0.001,Austria,2015,0.1100728,0.0243676,4.5172,8.23E-06,***
+Fugitive emissions from fuels,EU15 ,0.05,Austria,2015,0.719209,0.144051,4.9927,1.09E-06,***
+Fugitive emissions from fuels,EU15 ,0.01,Austria,2015,0.697087,0.153381,4.5448,8.21E-06,***
+Fugitive emissions from fuels,EU31 ,0.05,Austria,2015,0.544649,0.132875,4.099,4.84E-05,***
+Incineration and Open Burning of Waste,EU15 ,0.05,Austria,2009,-1.430338,0.103295,-13.8471,2.20E-16,***
+Incineration and Open Burning of Waste,EU15 ,0.01,Austria,2009,-1.549998,0.111546,-13.8957,2.20E-16,***
+Incineration and Open Burning of Waste,EU15 ,0.001,Austria,2009,-1.646822,0.14108,-11.673,2.20E-16,***
+Incineration and Open Burning of Waste,EU31 ,0.05,Austria,2009,-1.390561,0.1086211,-12.8019,2.20E-16,***
+Incineration and Open Burning of Waste,EU31 ,0.01,Austria,2009,-1.494903,0.131202,-11.3939,2.20E-16,***
+Incineration and Open Burning of Waste,EU31 ,0.001,Austria,2009,-1.536252,0.147548,-10.4119,2.20E-16,***
+Metal Industry,EU15 ,0.05,Austria,2002,0.324199,0.051673,6.2741,1.12E-09,***
+Metal Industry,EU15 ,0.05,Austria,2010,0.330264,0.045966,7.185,4.60E-12,***
+Metal Industry,EU15 ,0.01,Austria,2002,0.533418,0.053708,9.9318,2.20E-16,***
+Metal Industry,EU15 ,0.001,Austria,2002,0.553453,0.05561,9.9524,2.20E-16,***
+Metal Industry,EU31 ,0.05,Austria,2002,0.54078,0.077535,6.9747,7.72E-12,***
+Metal Industry,EU31 ,0.01,Austria,2002,0.528863,0.082139,6.4387,2.35E-10,***
+Mineral Industry,EU15 ,0.05,Austria,2001,0.203556,0.025823,7.8829,7.31E-14,***
+Mineral Industry,EU15 ,0.05,Austria,2015,0.164786,0.02598,6.3428,9.11E-10,***
+Mineral Industry,EU15 ,0.01,Austria,2001,1.79E-01,3.10E-02,5.7778,1.93E-08,***
+Mineral Industry,EU15 ,0.01,Austria,2015,1.73E-01,3.08E-02,5.5951,5.06E-08,***
+Mineral Industry,EU15 ,0.001,Austria,2001,0.194842,0.034279,5.684,3.15E-08,***
+Mineral Industry,EU15 ,0.001,Austria,2015,0.222058,0.033686,6.5919,1.99E-10,***
+Mineral Industry,EU31 ,0.05,Austria,2009,0.2421134,0.0325252,7.4439,3.43E-13,***
+Mineral Industry,EU31 ,0.01,Austria,2009,0.223054,0.037903,5.8848,6.55E-09,***
+Non-Energy Products from Fuels and Solvent Use,EU15 ,0.05,Austria,2000,0.1162877,0.0251053,4.632,5.33E-06,***
+Non-Energy Products from Fuels and Solvent Use,EU31 ,0.05,Austria,2000,0.1269168,0.0286357,4.4321,1.09E-05,***

@@ -340,6 +340,5 @@ My analysis is still preliminary and I have not conducted robustness checks. I h
 -   DONE: Update to 2021 data (note, 2021 data includes breakdown between fossil fuels and biofuels. We only consider fossil fuels in analysis)
 -   DONE: Omit positive breaks
 -   DONE Repeat analysis with sectors aggregated at Level 2 and Level 3
-
 -   Further policy attribution - look at Austrian sources
 -   CONTACTED: Confidence intervals - ask Lucas or Anne
