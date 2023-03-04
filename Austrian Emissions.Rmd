@@ -1,5 +1,5 @@
 ---
-title: "Attributing policies to reductions in Austrian GHG emissions"
+title: "Identifying effective climate policy in Austria: a reverse-causal analysis"
 author: "Talis Tebecis"
 date: "`r Sys.Date()`"
 output:
@@ -99,6 +99,45 @@ ggplot(data = subset(data_full, country == "Austria")) +
 
 From this analysis, we can see that there are significant variations in the emissions of all sectors. Thus, I conclude that it is worth evaluating structural breaks in emissions for all sectors for Austria. However, given the relatively large magnitude of the energy and heat, manufacturing and construction, refining, transport and other sectors, we should remember that emissions reductions in these sectors should be the focus, and not necessarily large relative emissions in low-emissions sectors.
 
+### Level 1 analysis
+
+```{r, echo=FALSE, fig.height = 6, fig.width = 12}
+emissions_codes <- read.csv("Data/01 Source_data/IPCC 2006 Categories.csv") %>% 
+  select(IPCC, IPCC_description)
+
+data_full1 <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022_level1.csv") %>% 
+  left_join(emissions_codes,
+            by = c("category_name" = "IPCC_description")) %>% 
+  filter(!is.na(lemissions_pc))
+
+ggplot(data = subset(data_full1, country == "Austria")) +
+  geom_line(mapping = aes(x = year, y = emissions_pc)) +
+  facet_wrap(~ category_name, scale = "free") +
+  labs(title = "Emissions per capita for Austria",
+       xlab = "Year",
+       ylab = "Emissions per capita") +
+  theme(axis.text = element_text(size = 6))
+```
+
+### Level 2 analysis
+
+```{r, echo=FALSE, fig.height = 6, fig.width = 12}
+emissions_codes <- read.csv("Data/01 Source_data/IPCC 2006 Categories.csv") %>% 
+  select(IPCC, IPCC_description)
+
+data_full2 <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022_level2.csv") %>% 
+  left_join(emissions_codes,
+            by = c("category_name" = "IPCC_description")) %>% 
+  filter(!is.na(lemissions_pc))
+
+ggplot(data = subset(data_full2, country == "Austria")) +
+  geom_line(mapping = aes(x = year, y = emissions_pc)) +
+  facet_wrap(~ category_name, scale = "free") +
+  labs(title = "Emissions per capita for Austria",
+       xlab = "Year",
+       ylab = "Emissions per capita") +
+  theme(axis.text = element_text(size = 6))
+```
 
 ## Identifying structural breaks
 
@@ -342,3 +381,13 @@ My analysis is still preliminary and I have not conducted robustness checks. I h
 -   DONE Repeat analysis with sectors aggregated at Level 2 and Level 3
 -   Further policy attribution - look at Austrian sources
 -   CONTACTED: Confidence intervals - ask Lucas or Anne
+
+##Structure
+
+• Intro
+• GHG emissions in Austria
+• Method
+• Results
+• Conclusion
+
+Overall, less than 20 pages. Less is better
