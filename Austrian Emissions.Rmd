@@ -334,32 +334,49 @@ I seek to attribute the negative structural breaks to policies or policy mixes a
 In the following, I try to attribute the negative structural breaks to policies implemented in those countries, and affecting the relevant sector, in the year of or years leading up to the break. Note, this is done on an ad hoc and manual basis, one structural break at a time. I have also only used resources (1) and (2) from the above list so far.
 
 
-### Incineration and Open Burning of Waste
+**Incineration of waste (2009)**
 
-The reduction in emissions from Incineration and Open Burning of Waste in 2009/2010 could be explained by the following policies which had an element associated with waste reduction in the same period.
+-   Ökostromverordnung - feed-in tariffs for green electricity (2009): Landfill gas, biomass and biogas, leading to waste being diverted from landfill. 15 year FiTs.
+-   Klimastrategie - Climate Strategy (2008 - 2012)
 
--   klima:aktiv Climate Strategy 2008 - 2012
--   Ökostromverordnung 2009 (2009 feed-in tariffs for green electricity)
--   Ökostromverordnung (feed-in tariffs) 2010 - ÖSVO 2010
-
-
-### Lime Production
-
-The reduction in Lime Production in 2006 could be associated with:
+**Lime production (2006)**
 
 -   Emission Trading System implemented in 2005, which affected mineral industries
+-   Expert System for an Intelligent Supply of Thermal Energy in Industry (EINSTEIN) (2007) is a methodology for the implementation of a holistic integral approach to thermal energy auditing in industry.
+
+**Petroleum refining (2015)**
+
+-   Residential building, energy and environmental subsidies (2014): reduced natural gas consumption
+
+-   Mandatory Energy Audits for Large Companies (2015). This is a requirement for large companies to conduct mandatory energy audits. It first entered into force with the Energy Efficiency Act at the start of 2015, and the first audits were to be reported by the end of 2015.
+-   Petroleum consumption and natural gas consumption reduced significantly in 2014
+-   Only one oil refinery exists in Austria (Schwechat) - so overall emissions depend solely on one company (OMV)
+-   Until the end of 2015, vehicles that run on alternative drivetrains (hybrids, those using fuels E85, CNG, LPG, or H2), receive a tax reduction of €600 ($639 US).
+-   Since 2011, an increase in the mineral oil tax for conventional vehicles has been in effect — €0.04/L for gasoline and €0.05/L for diesel. As compensation for drivers, the commuting allowance was increased by 10%.
+-   In 2014, Austria's public expenditures for energy-related R&D amounted to €143.1 million; an increase of 14.9% over expenditures in 2013 and representing an all-time high (Figure 5). The research areas of energy efficiency (43.1%), smart grids and storage (24.7%), and renewables (22.7%) define the priorities of publicly financed energy research within Austria. With €9.4 million in 2014, biofuels funding volume increased by €1 million in comparison to 2013.
+-   Targets for renewables: 2007-10 Government programme.  Increase use of alternative fuels in the transport sector to 10% by 2010 and to 20% by 2020; development of a methane-based transport fuel with a share of at least 20% methane by 2010; provide fuel coverage with a network of E85 and methane filling stations by 2010.
+
+**Water-borne navigation (2006-2007)**
+
+-   klima:aktiv programme Renewable Energy (2005). Includes provisions for biogas and biomethane for transport use.
+
+-   Klimaaktiv mobil (2007). Between 2007 and 2016 more than 6,600 green mobility projects have been initiated. This made annual savings of 610,000 tonnes of CO2 possible. In 2015,the BMLFUW allocated approx. 9 million EUR for klimaaktiv mobil funding andabout 2 million EUR for consulting, information and education programs, provided by the ministry, the Climate and Energy Fund and the National Environmental Support Scheme.
 
 
-### Water-borne Navigation
+## Model
 
-The reduction in Water-borne Navigation emission between 2014 and 2016 could be associated with:
+-   Multiple samples increases credibility for identified breaks
+-   getspanel in R
+-   Identifying structural breaks is commonplace in time-series literature on climate policy evaluation
+-   Benefits: use of conservative confidence levels and use of control groups
+-   “indicators”: interactions of country and year fixed effects - allow breaks in any country at any point in time
+-   Countries are treated sparsely (machine learning)
+-   EU15 are subject to largely identical EU regulations
+-   Movement from general model to specific model using ML to the sparse model, using the block search algorithm "gets".
 
--   (I have been unable to attribute a policy to this so far)
-
-Once again, I note that these analyses so far only consider negative structural shocks in emissions, and that it could be worth looking at positive structural shocks.
 
 
-## Open questions and actions
+## Discussion with Jesus
 
 My analysis is still preliminary and I have not conducted robustness checks. I have a number of open questions and/or actions that I need to take:
 
@@ -367,40 +384,27 @@ My analysis is still preliminary and I have not conducted robustness checks. I h
 -   Is it worth looking at upward structural breaks rather than just negative? Nope, just down
 -   How can I more systematically attribute policy mixes to breaks? This is poetry.
 -   Can I improve the structural breaks estimation technique using Bayesian methods? This would be compared to the TWFE model with machine learning (the 'gets' algorithm for shrinkage) to make the model sparse. Yes, after the Masters Thesis
-  -   Confirm gets package is using point and not step breaks (read Oxford GETS paper)
 -   How do I replicate the confidence intervals around country-time pairs that the original authors used? Ask Anne and Lucas
 -   How do I interpret the coefficients? What about values above 1.00 or below -1.00? Counterfactual
 -   What other useful policy databases are there? Austrian government websites
 -   Should I update to EDGAR v7 (currently v5) to get more recent emissions data up to 2021? Or will covid mess with the analysis? Yes
 
-
-## Next Steps
-
--   DONE: Update to 2021 data (note, 2021 data includes breakdown between fossil fuels and biofuels. We only consider fossil fuels in analysis)
--   DONE: Omit positive breaks
--   DONE Repeat analysis with sectors aggregated at Level 2 and Level 3
--   Further policy attribution - look at Austrian sources
--   CONTACTED: Confidence intervals - ask Lucas or Anne
-
-## Structure
-
-• Intro
-• GHG emissions in Austria
-• Method
-• Results
-• Conclusion
-
-Overall, less than 20 pages. Less is better
-
-## Further open questions
+## Open questions and actions
 
 -   Constructing confidence intervals
--   Counterfactual plots
+-   Counterfactual plots - done (somewhat)
 -   What is the material benefit of the reductions detected? e.g. total annual tonnes of carbon saved
 -   Which units to show? Analysis was done on log emissions per capita, but paper shows log emissions
+-   Confirm gets package is using point and not step breaks (read Oxford GETS paper). Current model uses step changes
 
 Model:
 -   Read getspanel documentation
 -   Read Pretis F, Schwarz M. Discovering What Mattered: Answering Reverse Causal Questions by Detecting Unknown Treatment Assignment and Timing as Breaks in Panel Models. mimeo. 2022.
 -    Read: Pretis F. Does a carbon tax reduce CO2 emissions? Evidence from British Columbia. SSRN  Working Paper. 2019.
+
+## PRESENTATION ACTIONS:
+
+Policy - make into table
+Conclusion - refine
+Model - clean up and add formulas; understand gets and block search
 

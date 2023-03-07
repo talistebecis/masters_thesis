@@ -151,38 +151,39 @@ ggplot(data = subset(data_full, country == "Austria")) +
 
 **An application of Koch et al. (2022)**
 
--   *"Attributing agnostically-detected large reductions in road $CO_2$ emissions to policy mixes"*
+-   "Attributing agnostically-detected large reductions in road $CO_2$ emissions to policy mixes"
 -   What do I do differently? Focus on Austria, on all sectors
 -   Identify structural breaks in emissions, not accounted for by GDP or population, using machine learning
 -   Attribute breaks to policies, using emissions policy databases
 
 ### Data
 
-Structural break identification:
+**Structural break identification**
 
--   **$CO_2$ emissions**: combination of EDGAR (Emissions Database for Global Atmospheric Research) and International Energy Agencies (IEA) databases
+-   $CO_2$ emissions: combination of EDGAR (Emissions Database for Global Atmospheric Research) and International Energy Agencies (IEA) databases
 -   **Population and GDP**: World Bank, World Development Indicators
 
-Policy databases:
+**Policy databases**
 
 -   **The IEA's Policies and Measures Database**: past, existing, or planned climate and energy policies. Data is collected from governments, international organisations, and IEA analyses, and governments can review the provided information periodically.
 -   **IEA/IRENA Renewable Energy Policies and Measures Database**: a joint database of renewable energy policies and measures of the IEA and IRENA.
 -   **The National Communications to the UNFCCC secretariat**: obligatory for our sample countries to submit regularly.
 
+
 ### Model
 
--   Two-way fixed effects (TWFE) panel estimators to determine breaks. Each country-time period pair is an indicator of a step-function
--   getspanel in R
--   Identifying structural breaks is commonplace in time-series literature on climate policy evaluation
--   Benefits: use of conservative confidence levels and use of control groups
--   “indicators”: interactions of country and year fixed effects - allow breaks in any country at any point in time
+**Structural break identification**
+
+-   Two-way fixed effects (TWFE) panel estimators
 -   26 time periods and 15 countries = 390 indicators (more than observations)
--   Countries are treated sparsely (machine learning)
--   2 samples: EU15 (2004) and EU31 (2020 EU27 +  Norway, Iceland, Switzerland, and the United Kingdom because they were part of the European Single Market and subject to harmonized regulations). Multiple samples increases credibility for identified breaks
--   EU15 are subject to largely identical EU regulations
--   Movement from general model to specific model using ML to the sparse model, using the block search algorithm "gets".
+-   2 samples: EU15 (2004) and EU31 (2020 EU27 + Norway, Iceland, Switzerland, and the United Kingdom because they were part of the European Single Market and subject to harmonized regulations)
+-   Sparse treatment of countries using block search machine learning algorithm
 
+**General model**
+![](Data/03%20Output_data/general_model.png){width="80%"}
 
+**Specific model**
+![](Data/03%20Output_data/general_model.png){width="80%"}
 
 ## Results {.flexbox .vcenter}
 
@@ -315,76 +316,45 @@ ggarrange(waste_plot, lime_plot, petrol_plot, water_plot, ncol = 2, nrow = 2)
 
 ### Structural breaks
 
-![](Data/03%20Output_data/highlights.png){width="90%"}
+![](Data/03%20Output_data/highlights.png)
 
 Emissions per capita by sector
 
 ### Policy attribution
 
-**Incineration of waste (2009)**
+**Table 2. Policy attribution to identified structural breaks**
 
--   Austrian Climate Change Strategy (2007)
--   klima:aktiv Climate Strategy 2008 - 2012
--   Ökostromverordnung 2009 (2009 feed-in tariffs for green electricity)
--   Ökostromverordnung (feed-in tariffs) (2010). FiT for Landfill gas, biomass and biogas, leading to waste being diverted from landfill. 15 year FiTs.
-
-**Lime production (2006)**
-
--   Emission Trading System implemented in 2005, which affected mineral industries
--   Expert System for an Intelligent Supply of Thermal Energy in Industry (EINSTEIN) (2007) is a methodology for the implementation of a holistic integral approach to thermal energy auditing in industry.
--   Climate and Energy Fund (2007). The Climate Fund supports actions taken in the areas of **buildings**, mobility, production and energy supply.
-
-**Petroleum refining (2015)**
-
--   Klimaaktiv mobil (2007). Between 2007 and 2016 more than 6,600 green mobility projects have beeninitiated. This made annual savings of 610,000 tonnes of CO2 possible. In 2015,the BMLFUW allocated approx. 9 million EUR for klimaaktiv mobil funding andabout 2 million EUR for consulting, information and education programs, providedby the ministry, the Climate and Energy Fund and the National EnvironmentalSupport Scheme.
--   Residential building, energy and environmental subsidies (2014)
--   Mandatory Energy Audits for Large Companies (2015). This is a requirement for large companies to conduct mandatory energy audits. It first entered into force with the Energy Efficiency Act at the start of 2015, and the first audits were to be reported by the end of 2015.
-
--   Petroleum consumption and natural gas consumption reduced significantly in 2014
--   Only one oil refinery exists in Austria (Schwechat) - so overall emissions depend solely on one company (OMV)
--   Until the end of 2015, vehicles that run on alternative drivetrains (hybrids, those using fuels E85, CNG, LPG, or H2), receive a tax reduction of €600 ($639 US).
--   Since 2011, an increase in the mineral oil tax for conventional vehicles has been in effect — €0.04/L for gasoline and €0.05/L for diesel. As compensation for drivers, the commuting allowance was increased by 10%.
--   In 2014, Austria's public expenditures for energy-related R&D amounted to €143.1 million; an increase of 14.9% over expenditures in 2013 and representing an all-time high (Figure 5). The research areas of energy efficiency (43.1%), smart grids and storage (24.7%), and renewables (22.7%) define the priorities of publicly financed energy research within Austria. With €9.4 million in 2014, biofuels funding volume increased by €1 million in comparison to 2013.
--   Targets for renewables: 2007-10 Government programme.  Increase use of alternative fuels in the transport sector to 10% by 2010 and to 20% by 2020; development of a methane-based transport fuel with a share of at least 20% methane by 2010; provide fuel coverage with a network of E85 and methane filling stations by 2010.
-
-**Water-borne navigation (2006-2007)**
-
--   Austrian Climate Change Strategy (2007)
--   klima:aktiv programme Renewable Energy (2005). Includes provisions for biogas and boimaethane for transport use.
--   Klimaaktiv mobil (2007). Between 2007 and 2016 more than 6,600 green mobility projects have beeninitiated. This made annual savings of 610,000 tonnes of CO2 possible. In 2015,the BMLFUW allocated approx. 9 million EUR for klimaaktiv mobil funding andabout 2 million EUR for consulting, information and education programs, providedby the ministry, the Climate and Energy Fund and the National EnvironmentalSupport Scheme.
-
+![](Data/03%20Output_data/policy_attribution.png){width="90%"}
 
 ### Conclusion
 
-Drawbacks
+**Headline**
 
--   Causal interpretation of policies relies on no other interventions other than the policy at the time of the break
--   Should not be seen as a replacement of forward policy evaluation, but a complement to it (help idenfity missed policies)
--   This approach tends to find large scale reductions, and is not so sensitive to smaller reductions (justified - as we are looking for MOST effective policy)
+There were very few highly effective climate policies identified using the reverse-causal approach for Austria.
+
+**Caveats**
+
+-   Reverse-causal approach is not a substitute, but a complement
+-   This approach identifies relatively large effects
+-   Causal interpretation of policies relies on assumption of no other interventions being present at the time of the break
 
 
 ## Appendix
 
-### GHG emissions in Austria {.flexbox .vcenter}
+### Countries in each sample group
 
-```{r, include=FALSE, echo=FALSE, fig.cap="Emissions per capita by sector (Level 2)", fig.width = 10}
-data_full2 <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022_level2.csv") %>% 
-  left_join(emissions_codes,
-            by = c("category_name" = "IPCC_description")) %>% 
-  filter(!is.na(lemissions_pc))
+EU15:
 
-ggplot(data = subset(data_full2, country == "Austria")) +
-  geom_line(mapping = aes(x = year, y = emissions_pc)) +
-  facet_wrap(~ category_name, scale = "free") +
-  labs(x = "Year",
-       y = "Emissions per capita") +
-  theme(axis.text = element_text(size = 6),
-        strip.text = element_text(size = 7))
-```
+Austria, Belgium, Germany, Denmark, Spain, Finland, France, United Kingdom, Ireland, Italy, Luxembourg, Netherlands, Greece, Portugal, Sweden
+
+EU31:
+
+Austria, Belgium, Germany, Denmark, Spain, Finland, France, United Kingdom, Ireland, Italy, Luxembourg, Netherlands, Greece, Portugal, Sweden, Croatia, Bulgaria, Cyprus, Czechia, Estonia, Hungary, Lithuania, Latvia, Malta, Poland, Romania, Slovak Republic, Slovenia, Switzerland, Iceland, Norway
+
 
 ### GHG emissions in Austria {.flexbox .vcenter}
 
-```{r, include=FALSE, echo=FALSE, fig.cap="Emissions per capita by sector (Level 1)"}
+```{r, echo=FALSE, fig.cap="Emissions per capita by sector (Level 1)"}
 data_full1 <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022_level1.csv") %>% 
   left_join(emissions_codes,
             by = c("category_name" = "IPCC_description")) %>% 
@@ -399,12 +369,31 @@ ggplot(data = subset(data_full1, country == "Austria")) +
         strip.text = element_text(size = 8))
 ```
 
+
+### GHG emissions in Austria {.flexbox .vcenter}
+
+```{r, echo=FALSE, fig.cap="Emissions per capita by sector (Level 2)", fig.width = 10}
+data_full2 <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022_level2.csv") %>% 
+  left_join(emissions_codes,
+            by = c("category_name" = "IPCC_description")) %>% 
+  filter(!is.na(lemissions_pc))
+
+ggplot(data = subset(data_full2, country == "Austria")) +
+  geom_line(mapping = aes(x = year, y = emissions_pc)) +
+  facet_wrap(~ category_name, scale = "free") +
+  labs(x = "Year",
+       y = "Emissions per capita") +
+  theme(axis.text = element_text(size = 6),
+        strip.text = element_text(size = 7))
+```
+
+
 ### Structural Breaks (Negative)
 
-**Table 1. Negative structural breaks in Austrian emissions**
+**Table 3. Negative structural breaks in Austrian emissions (Level 1)**
 
-```{r, include=FALSE, echo=FALSE}
-results <- read.csv("Data/03 Output_data/AUT_results_2022.csv")
+```{r, echo=FALSE}
+results <- read.csv("Data/03 Output_data/AUT_results_2022_level_1.csv")
 negative_breaks <- results %>% 
   filter(coef <= 0) %>%
   select(category, sample, p.value.test, year, coef, Signif.) %>% 
@@ -414,11 +403,12 @@ kable(negative_breaks,
 
 ```
 
+
 ### Structural Breaks (Negative)
 
-**Table 2. Negative structural breaks in Austrian emissions (Level 2)**
+**Table 4. Negative structural breaks in Austrian emissions (Level 2)**
 
-```{r, include=FALSE, echo=FALSE}
+```{r, echo=FALSE}
 results <- read.csv("Data/03 Output_data/AUT_results_2022_level_2.csv")
 negative_breaks <- results %>% 
   filter(coef <= 0) %>%
@@ -431,10 +421,10 @@ kable(negative_breaks,
 
 ### Structural Breaks (Negative)
 
-**Table 3. Negative structural breaks in Austrian emissions (Level 1)**
+**Table 5. Negative structural breaks in Austrian emissions**
 
-```{r, include=FALSE, echo=FALSE}
-results <- read.csv("Data/03 Output_data/AUT_results_2022_level_1.csv")
+```{r, echo=FALSE}
+results <- read.csv("Data/03 Output_data/AUT_results_2022.csv")
 negative_breaks <- results %>% 
   filter(coef <= 0) %>%
   select(category, sample, p.value.test, year, coef, Signif.) %>% 
@@ -443,13 +433,3 @@ kable(negative_breaks,
       col.names = c("IPCC emissions category", "Sample", "P-value", "Year", "Coefficient", "Significance"))
 
 ```
-
-### Countries in each sample group
-
-EU15:
-
-Austria, Belgium, Germany, Denmark, Spain, Finland, France, United Kingdom, Ireland, Italy, Luxembourg, Netherlands, Greece, Portugal, Sweden
-
-EU31:
-
-Austria, Belgium, Germany, Denmark, Spain, Finland, France, United Kingdom, Ireland, Italy, Luxembourg, Netherlands, Greece, Portugal, Sweden, Croatia, Bulgaria, Cyprus, Czechia, Estonia, Hungary, Lithuania, Latvia, Malta, Poland, Romania, Slovak Republic, Slovenia, Switzerland, Iceland, Norway
