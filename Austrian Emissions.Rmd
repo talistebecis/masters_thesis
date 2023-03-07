@@ -382,7 +382,7 @@ My analysis is still preliminary and I have not conducted robustness checks. I h
 -   Further policy attribution - look at Austrian sources
 -   CONTACTED: Confidence intervals - ask Lucas or Anne
 
-##Structure
+## Structure
 
 • Intro
 • GHG emissions in Austria
@@ -391,3 +391,16 @@ My analysis is still preliminary and I have not conducted robustness checks. I h
 • Conclusion
 
 Overall, less than 20 pages. Less is better
+
+## Further open questions
+
+-   Constructing confidence intervals
+-   Counterfactual plots
+-   What is the material benefit of the reductions detected? e.g. total annual tonnes of carbon saved
+-   Which units to show? Analysis was done on log emissions per capita, but paper shows log emissions
+
+Model:
+-   Read getspanel documentation
+-   Read Pretis F, Schwarz M. Discovering What Mattered: Answering Reverse Causal Questions by Detecting Unknown Treatment Assignment and Timing as Breaks in Panel Models. mimeo. 2022.
+-    Read: Pretis F. Does a carbon tax reduce CO2 emissions? Evidence from British Columbia. SSRN  Working Paper. 2019.
+

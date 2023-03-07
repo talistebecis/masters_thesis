@@ -61,7 +61,8 @@ pacman::p_load(knitr)
 
 ```{r, echo=FALSE, fig.cap="Emissions per capita, GDP and Population in Austria", fig.height = 3, fig.width = 10, warning = FALSE}
 data <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022.csv") %>% 
-  filter(country == "Austria") %>% 
+  filter(country == "Austria",
+         year >= 1995) %>% 
   group_by(year) %>% 
   summarise(lemis_pc = sum(emissions),
             lpop = mean(lpop),
@@ -104,7 +105,8 @@ emissions_codes <- read.csv("Data/01 Source_data/IPCC 2006 Categories.csv") %>%
 data_full <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022.csv") %>%
   left_join(emissions_codes,
             by = c("category" = "IPCC")) %>%
-  filter(!is.na(lemissions_pc))
+  filter(!is.na(lemissions_pc),
+         year >= 1995)
 
 AUT_emissions_pc <- data_full %>%
   filter(country == "Austria") %>%
@@ -134,12 +136,13 @@ ggplot(data = subset(data_full, country == "Austria")) +
 
 ## Methodology
 
-### Policy evaluation: identifying effective climate policy
+### Identifying effective climate policy
 
 **Standard policy evaluation**
 
 -   Identify effects-of-causes of single, known policies
 -   Difficult to isolate individual policies in a real-world setting
+-   Narrow analysis: potential to miss policies
 
 **Reverse-causal policy evaluation**
 
@@ -148,14 +151,14 @@ ggplot(data = subset(data_full, country == "Austria")) +
 
 **An application of Koch et al. (2022)**
 
--   *"Attributing agnostically-detected large reductions in road* $CO_2$ emissions to policy mixes"
+-   *"Attributing agnostically-detected large reductions in road $CO_2$ emissions to policy mixes"*
 -   What do I do differently? Focus on Austria, on all sectors
 -   Identify structural breaks in emissions, not accounted for by GDP or population, using machine learning
 -   Attribute breaks to policies, using emissions policy databases
 
 ### Data
 
-Core datasets:
+Structural break identification:
 
 -   **$CO_2$ emissions**: combination of EDGAR (Emissions Database for Global Atmospheric Research) and International Energy Agencies (IEA) databases
 -   **Population and GDP**: World Bank, World Development Indicators
@@ -168,6 +171,19 @@ Policy databases:
 
 ### Model
 
+-   Two-way fixed effects (TWFE) panel estimators to determine breaks. Each country-time period pair is an indicator of a step-function
+-   getspanel in R
+-   Identifying structural breaks is commonplace in time-series literature on climate policy evaluation
+-   Benefits: use of conservative confidence levels and use of control groups
+-   “indicators”: interactions of country and year fixed effects - allow breaks in any country at any point in time
+-   26 time periods and 15 countries = 390 indicators (more than observations)
+-   Countries are treated sparsely (machine learning)
+-   2 samples: EU15 (2004) and EU31 (2020 EU27 +  Norway, Iceland, Switzerland, and the United Kingdom because they were part of the European Single Market and subject to harmonized regulations). Multiple samples increases credibility for identified breaks
+-   EU15 are subject to largely identical EU regulations
+-   Movement from general model to specific model using ML to the sparse model, using the block search algorithm "gets".
+
+
+
 ## Results {.flexbox .vcenter}
 
 ### Structural breaks
@@ -178,51 +194,128 @@ Policy databases:
 
 ### Structural breaks
 
-```{r, echo=FALSE, fig.cap="Emissions per capita for sectors with structural breaks", fig.height = 5, fig.width = 10}
-waste <- ggplot(data = subset(data_full, country == "Austria" & IPCC_description == "Incineration of Waste")) +
-  geom_line(mapping = aes(x = year, y = emissions_pc)) +
+```{r, echo=FALSE, fig.cap="Emissions per capita for sectors with structural breaks", fig.height = 5, fig.width = 10, warning = FALSE}
+waste <- data_full %>% 
+  filter(country == "Austria",
+         IPCC_description == "Incineration of Waste") %>% 
+  select(year, emissions_pc) %>% 
+  mutate(counterfac = case_when(year == 2008 ~ emissions_pc,
+                                year == 2009 ~ emissions_pc*(1+1.508),
+                                year >= 2010 & year <= 2011 ~ emissions_pc+(5.015004e-07-1.999603e-07)))
+
+waste_plot <- ggplot(waste, aes(x=year)) + 
+  geom_line(aes(y = emissions_pc)) + 
+  geom_line(aes(y = counterfac), color="red", linetype="dotted", linewidth=0.8) +
   labs(x = "Year",
        y = "Emissions (kilotonnes)",
        title = "Incineration of Waste") +
   theme(axis.text = element_text(size = 6),
         strip.text = element_text(size = 7)) +
-  geom_vline(xintercept = 2009, color = "red", linetype="dotted", linewidth=0.8)
+  geom_vline(xintercept = 2009, linetype="dotted", linewidth=0.8)
 
-lime <- ggplot(data = subset(data_full, country == "Austria" & IPCC_description == "Lime production")) +
-  geom_line(mapping = aes(x = year, y = emissions_pc)) +
+# waste <- ggplot(data = subset(data_full, country == "Austria" & IPCC_description == "Incineration of Waste")) +
+#   geom_line(mapping = aes(x = year, y = emissions_pc)) +
+#   labs(x = "Year",
+#        y = "Emissions (kilotonnes)",
+#        title = "Incineration of Waste") +
+#   theme(axis.text = element_text(size = 6),
+#         strip.text = element_text(size = 7)) +
+#   geom_vline(xintercept = 2009, color = "red", linetype="dotted", linewidth=0.8)
+
+lime <- data_full %>% 
+  filter(country == "Austria",
+         IPCC_description == "Lime production") %>% 
+  select(year, emissions_pc) %>% 
+  mutate(counterfac = case_when(year == 2005 ~ emissions_pc,
+                                year == 2006 ~ emissions_pc*(1+0.755),
+                                year >= 2007 & year <= 2008 ~ emissions_pc+(7.407837e-05-4.220990e-05)))
+
+lime_plot <- ggplot(lime, aes(x=year)) + 
+  geom_line(aes(y = emissions_pc)) + 
+  geom_line(aes(y = counterfac), color="red", linetype="dotted", linewidth=0.8) +
   labs(x = "Year",
        y = "Emissions (kilotonnes)",
        title = "Lime production") +
   theme(axis.text = element_text(size = 6),
         strip.text = element_text(size = 7)) +
-  geom_vline(xintercept = 2006, color = "red", linetype="dotted", linewidth=0.8)
+  geom_vline(xintercept = 2006, linetype="dotted", linewidth=0.8)
 
-petrol <- ggplot(data = subset(data_full, country == "Austria" & IPCC_description == "Petroleum Refining")) +
-  geom_line(mapping = aes(x = year, y = emissions_pc)) +
+# lime <- ggplot(data = subset(data_full, country == "Austria" & IPCC_description == "Lime production")) +
+#   geom_line(mapping = aes(x = year, y = emissions_pc)) +
+#   labs(x = "Year",
+#        y = "Emissions (kilotonnes)",
+#        title = "Lime production") +
+#   theme(axis.text = element_text(size = 6),
+#         strip.text = element_text(size = 7)) +
+#   geom_vline(xintercept = 2006, color = "red", linetype="dotted", linewidth=0.8)
+
+petrol <- data_full %>% 
+  filter(country == "Austria",
+         IPCC_description == "Petroleum Refining") %>% 
+  select(year, emissions_pc) %>% 
+  mutate(counterfac = case_when(year == 2014 ~ emissions_pc,
+                                year == 2015 ~ emissions_pc*(1+0.194),
+                                year >= 2016 & year <= 2017 ~ emissions_pc+(0.0008486520-0.0007107638)))
+
+petrol_plot <- ggplot(petrol, aes(x=year)) + 
+  geom_line(aes(y = emissions_pc)) + 
+  geom_line(aes(y = counterfac), color="red", linetype="dotted", linewidth=0.8) +
   labs(x = "Year",
        y = "Emissions (kilotonnes)",
        title = "Petroleum Refining") +
   theme(axis.text = element_text(size = 6),
         strip.text = element_text(size = 7)) +
-  geom_vline(xintercept = 2015, color = "red", linetype="dotted", linewidth=0.8)
+  geom_vline(xintercept = 2015, linetype="dotted", linewidth=0.8)
 
-water <- ggplot(data = subset(data_full, country == "Austria" & IPCC_description == "Water-borne Navigation")) +
-  geom_line(mapping = aes(x = year, y = emissions_pc)) +
+# petrol <- ggplot(data = subset(data_full, country == "Austria" & IPCC_description == "Petroleum Refining")) +
+#   geom_line(mapping = aes(x = year, y = emissions_pc)) +
+#   labs(x = "Year",
+#        y = "Emissions (kilotonnes)",
+#        title = "Petroleum Refining") +
+#   theme(axis.text = element_text(size = 6),
+#         strip.text = element_text(size = 7)) +
+#   geom_vline(xintercept = 2015, color = "red", linetype="dotted", linewidth=0.8)
+
+water <- data_full %>% 
+  filter(country == "Austria",
+         IPCC_description == "Water-borne Navigation") %>% 
+  select(year, emissions_pc) %>% 
+  mutate(counterfac1 = case_when(year == 2005 ~ emissions_pc,
+                                year == 2006 ~ emissions_pc*(1+0.255),
+                                year >= 2007 & year <= 2008 ~ emissions_pc+(2.205611e-06-1.757459e-06)),
+         counterfac2 = case_when(year == 2006 ~ emissions_pc,
+                                year == 2007 ~ emissions_pc*(1+0.217),
+                                year >= 2008 & year <= 2009 ~ emissions_pc+(2.150167e-06-1.766776e-06)))
+
+water_plot <- ggplot(water, aes(x=year)) + 
+  geom_line(aes(y = emissions_pc)) + 
+  geom_line(aes(y = counterfac1), color="red", linetype="dotted", linewidth=0.8) +
+  geom_line(aes(y = counterfac2), color="red", linetype="dotted", linewidth=0.8) +
   labs(x = "Year",
        y = "Emissions (kilotonnes)",
-       title = "Water-borne Navigation") +
+       title = "Petroleum Refining") +
   theme(axis.text = element_text(size = 6),
         strip.text = element_text(size = 7)) +
-  geom_vline(xintercept = 2006, color = "red", linetype="dotted", linewidth=0.8) +
-  geom_vline(xintercept = 2007, color = "red", linetype="dotted", linewidth=0.8)
+  geom_vline(xintercept = 2006, linetype="dotted", linewidth=0.8)+
+  geom_vline(xintercept = 2007, linetype="dotted", linewidth=0.8)
 
-ggarrange(waste, lime, petrol, water, ncol = 2, nrow = 2)
+# water <- ggplot(data = subset(data_full, country == "Austria" & IPCC_description == "Water-borne Navigation")) +
+#   geom_line(mapping = aes(x = year, y = emissions_pc)) +
+#   labs(x = "Year",
+#        y = "Emissions (kilotonnes)",
+#        title = "Water-borne Navigation") +
+#   theme(axis.text = element_text(size = 6),
+#         strip.text = element_text(size = 7)) +
+#   geom_vline(xintercept = 2006, color = "red", linetype="dotted", linewidth=0.8) +
+#   geom_vline(xintercept = 2007, color = "red", linetype="dotted", linewidth=0.8)
+ 
+ggarrange(waste_plot, lime_plot, petrol_plot, water_plot, ncol = 2, nrow = 2)
 
 ```
 
 ### Structural breaks
 
-![](Data/03%20Output_data/highlights.png){width="100%"}
+![](Data/03%20Output_data/highlights.png){width="90%"}
 
 Emissions per capita by sector
 
@@ -247,7 +340,6 @@ Emissions per capita by sector
 -   Residential building, energy and environmental subsidies (2014)
 -   Mandatory Energy Audits for Large Companies (2015). This is a requirement for large companies to conduct mandatory energy audits. It first entered into force with the Energy Efficiency Act at the start of 2015, and the first audits were to be reported by the end of 2015.
 
--   OPEC established in Austria in 2015
 -   Petroleum consumption and natural gas consumption reduced significantly in 2014
 -   Only one oil refinery exists in Austria (Schwechat) - so overall emissions depend solely on one company (OMV)
 -   Until the end of 2015, vehicles that run on alternative drivetrains (hybrids, those using fuels E85, CNG, LPG, or H2), receive a tax reduction of €600 ($639 US).
@@ -263,6 +355,13 @@ Emissions per capita by sector
 
 
 ### Conclusion
+
+Drawbacks
+
+-   Causal interpretation of policies relies on no other interventions other than the policy at the time of the break
+-   Should not be seen as a replacement of forward policy evaluation, but a complement to it (help idenfity missed policies)
+-   This approach tends to find large scale reductions, and is not so sensitive to smaller reductions (justified - as we are looking for MOST effective policy)
+
 
 ## Appendix
 
@@ -344,3 +443,13 @@ kable(negative_breaks,
       col.names = c("IPCC emissions category", "Sample", "P-value", "Year", "Coefficient", "Significance"))
 
 ```
+
+### Countries in each sample group
+
+EU15:
+
+Austria, Belgium, Germany, Denmark, Spain, Finland, France, United Kingdom, Ireland, Italy, Luxembourg, Netherlands, Greece, Portugal, Sweden
+
+EU31:
+
+Austria, Belgium, Germany, Denmark, Spain, Finland, France, United Kingdom, Ireland, Italy, Luxembourg, Netherlands, Greece, Portugal, Sweden, Croatia, Bulgaria, Cyprus, Czechia, Estonia, Hungary, Lithuania, Latvia, Malta, Poland, Romania, Slovak Republic, Slovenia, Switzerland, Iceland, Norway
