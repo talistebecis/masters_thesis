@@ -27,7 +27,7 @@ categories <- read.csv("Data/01 Source_data/IPCC 2006 Categories.csv") %>%
 # Analysis ----------------------------------------------------------------
 
 #run loop over all variables to produce results for all IPCC categories
-for(IPCC_code in 15:24){
+for(IPCC_code in 1:1){
   
   #set IPCC code and category
   emissions_code <- emissions_codes[IPCC_code,]

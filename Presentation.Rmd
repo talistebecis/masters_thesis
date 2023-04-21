@@ -4,8 +4,8 @@ author: "Talis Tebecis"
 date: "March 2023"
 output:
   ioslides_presentation:
-    widescreen: true
-    smaller: true
+    widescreen: yes
+    smaller: yes
     transition: 0
     slide_level: 3
     css: custom.css
@@ -35,7 +35,7 @@ pacman::p_load(knitr)
 
 **My quest to find effective climate action**
 
--   A love for nature
+-   A love for nature (see left)
 -   **Australia:** a land of fires and floods
 -   **Activism:** Australian Youth Climate Coalition
 -   **Small scale action:** University Sustainability Office
@@ -160,14 +160,14 @@ ggplot(data = subset(data_full, country == "Austria")) +
 
 **Structural break identification**
 
--   $CO_2$ emissions: combination of EDGAR (Emissions Database for Global Atmospheric Research) and International Energy Agencies (IEA) databases
+-   $CO_2$ **emissions**: combination of EDGAR (Emissions Database for Global Atmospheric Research) and International Energy Agencies (IEA) databases
 -   **Population and GDP**: World Bank, World Development Indicators
 
 **Policy databases**
 
 -   **The IEA's Policies and Measures Database**: past, existing, or planned climate and energy policies. Data is collected from governments, international organisations, and IEA analyses, and governments can review the provided information periodically.
 -   **IEA/IRENA Renewable Energy Policies and Measures Database**: a joint database of renewable energy policies and measures of the IEA and IRENA.
--   **The National Communications to the UNFCCC secretariat**: obligatory for our sample countries to submit regularly.
+-   **The National Communications to the UNFCCC secretariat**: obligatory for EU countries to submit regularly.
 
 
 ### Model
@@ -176,14 +176,15 @@ ggplot(data = subset(data_full, country == "Austria")) +
 
 -   Two-way fixed effects (TWFE) panel estimators
 -   26 time periods and 15 countries = 390 indicators (more than observations)
--   2 samples: EU15 (2004) and EU31 (2020 EU27 + Norway, Iceland, Switzerland, and the United Kingdom because they were part of the European Single Market and subject to harmonized regulations)
+-   2 samples: EU15 and EU27 + Norway, Iceland, Switzerland, and the United Kingdom because they were part of the European Single Market and subject to harmonized regulations)
 -   Sparse treatment of countries using block search machine learning algorithm
+-   General-to-specific (GETS) model
 
 **General model**
 ![](Data/03%20Output_data/general_model.png){width="80%"}
 
 **Specific model**
-![](Data/03%20Output_data/general_model.png){width="80%"}
+![](Data/03%20Output_data/specific_model.png){width="80%"}
 
 ## Results {.flexbox .vcenter}
 
@@ -195,7 +196,14 @@ ggplot(data = subset(data_full, country == "Austria")) +
 
 ### Structural breaks
 
-```{r, echo=FALSE, fig.cap="Emissions per capita for sectors with structural breaks", fig.height = 5, fig.width = 10, warning = FALSE}
+![](Data/03%20Output_data/highlights.png)
+
+Emissions per capita by sector
+
+
+### Structural breaks
+
+```{r, echo=FALSE, fig.cap="Emissions per capita for sectors with structural breaks and counterfactuals", fig.height = 5, fig.width = 10, warning = FALSE}
 waste <- data_full %>% 
   filter(country == "Austria",
          IPCC_description == "Incineration of Waste") %>% 
@@ -206,13 +214,13 @@ waste <- data_full %>%
 
 waste_plot <- ggplot(waste, aes(x=year)) + 
   geom_line(aes(y = emissions_pc)) + 
-  geom_line(aes(y = counterfac), color="red", linetype="dotted", linewidth=0.8) +
+  geom_line(aes(y = counterfac), color="red") +
   labs(x = "Year",
        y = "Emissions (kilotonnes)",
        title = "Incineration of Waste") +
   theme(axis.text = element_text(size = 6),
         strip.text = element_text(size = 7)) +
-  geom_vline(xintercept = 2009, linetype="dotted", linewidth=0.8)
+  geom_vline(xintercept = 2009, linetype="dotted")
 
 # waste <- ggplot(data = subset(data_full, country == "Austria" & IPCC_description == "Incineration of Waste")) +
 #   geom_line(mapping = aes(x = year, y = emissions_pc)) +
@@ -233,13 +241,13 @@ lime <- data_full %>%
 
 lime_plot <- ggplot(lime, aes(x=year)) + 
   geom_line(aes(y = emissions_pc)) + 
-  geom_line(aes(y = counterfac), color="red", linetype="dotted", linewidth=0.8) +
+  geom_line(aes(y = counterfac), color="red") +
   labs(x = "Year",
        y = "Emissions (kilotonnes)",
        title = "Lime production") +
   theme(axis.text = element_text(size = 6),
         strip.text = element_text(size = 7)) +
-  geom_vline(xintercept = 2006, linetype="dotted", linewidth=0.8)
+  geom_vline(xintercept = 2006, linetype="dotted")
 
 # lime <- ggplot(data = subset(data_full, country == "Austria" & IPCC_description == "Lime production")) +
 #   geom_line(mapping = aes(x = year, y = emissions_pc)) +
@@ -260,13 +268,13 @@ petrol <- data_full %>%
 
 petrol_plot <- ggplot(petrol, aes(x=year)) + 
   geom_line(aes(y = emissions_pc)) + 
-  geom_line(aes(y = counterfac), color="red", linetype="dotted", linewidth=0.8) +
+  geom_line(aes(y = counterfac), color="red") +
   labs(x = "Year",
        y = "Emissions (kilotonnes)",
        title = "Petroleum Refining") +
   theme(axis.text = element_text(size = 6),
         strip.text = element_text(size = 7)) +
-  geom_vline(xintercept = 2015, linetype="dotted", linewidth=0.8)
+  geom_vline(xintercept = 2015, linetype="dotted")
 
 # petrol <- ggplot(data = subset(data_full, country == "Austria" & IPCC_description == "Petroleum Refining")) +
 #   geom_line(mapping = aes(x = year, y = emissions_pc)) +
@@ -290,15 +298,15 @@ water <- data_full %>%
 
 water_plot <- ggplot(water, aes(x=year)) + 
   geom_line(aes(y = emissions_pc)) + 
-  geom_line(aes(y = counterfac1), color="red", linetype="dotted", linewidth=0.8) +
-  geom_line(aes(y = counterfac2), color="red", linetype="dotted", linewidth=0.8) +
+  geom_line(aes(y = counterfac1), color="red") +
+  geom_line(aes(y = counterfac2), color="red") +
   labs(x = "Year",
        y = "Emissions (kilotonnes)",
-       title = "Petroleum Refining") +
+       title = "Water-borne Navigation") +
   theme(axis.text = element_text(size = 6),
         strip.text = element_text(size = 7)) +
-  geom_vline(xintercept = 2006, linetype="dotted", linewidth=0.8)+
-  geom_vline(xintercept = 2007, linetype="dotted", linewidth=0.8)
+  geom_vline(xintercept = 2006, linetype="dotted")+
+  geom_vline(xintercept = 2007, linetype="dotted")
 
 # water <- ggplot(data = subset(data_full, country == "Austria" & IPCC_description == "Water-borne Navigation")) +
 #   geom_line(mapping = aes(x = year, y = emissions_pc)) +
@@ -314,12 +322,6 @@ ggarrange(waste_plot, lime_plot, petrol_plot, water_plot, ncol = 2, nrow = 2)
 
 ```
 
-### Structural breaks
-
-![](Data/03%20Output_data/highlights.png)
-
-Emissions per capita by sector
-
 ### Policy attribution
 
 **Table 2. Policy attribution to identified structural breaks**
@@ -330,13 +332,14 @@ Emissions per capita by sector
 
 **Headline**
 
-There were very few highly effective climate policies identified using the reverse-causal approach for Austria.
+There appear to be very few highly effective climate policies identified using the reverse-causal approach for Austria from 1995 to 2021.
 
 **Caveats**
 
--   Reverse-causal approach is not a substitute, but a complement
+-   The reverse-causal approach is not a substitute, but a complement to standard policy evaluation
 -   This approach identifies relatively large effects
--   Causal interpretation of policies relies on assumption of no other interventions being present at the time of the break
+-   This will not identify EU-wide regulations
+-   Causal interpretation of policies relies on assumption of no other interventions being present at the time of the break and on the exogeneity of the shock
 
 
 ## Appendix

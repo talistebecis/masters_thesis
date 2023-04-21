@@ -1,0 +1,48 @@
+---
+title: "Dicsussion: the expansion of for-profit higher education institutions"
+author: "Talis Tebecis"
+date: "March 2023"
+output:
+  ioslides_presentation:
+    widescreen: true
+    smaller: true
+    transition: 0
+    slide_level: 3
+    css: custom.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+### Summary of research
+
+**Research question**
+
+Why do non-traditional students make up such a large proportion of cohorts in for-profit, higher education institutions? Do these institutions target minority groups for the government subsidies?
+
+**Key finding**
+
+There is not significant evidence to suggest that these institutions target regions with these minority groups.
+
+**Research strengths**
+
+-   ***Novelty***: asks a question that I have never thought about before and addresses an open question in the literature
+-   ***Importance***: sheds light on effective/non-effective educational institutions, extremely important for long-term economic outcomes
+-   ***Story-telling***: compelling argument about the gap in the literature, proposing a puzzling question
+
+
+### Discussion
+
+**Other causes than "predatory inclusion"**
+
+-   ***Market niche***: for-profit institutions could be servicing a need for more flexible education, not catered for by public universities
+-   ***Self-selection***: minority groups could be self-selecting into these institutions because of lower entry barriers or network effects
+
+**Empirical approach**
+
+-   ***Spatial granularity***: due to limited observations, repeat the analysis on the state level. Sparse observations on county level will skew coefficients towards zero
+-   ***Institution closures***: conduct the analysis again with closures of these institutions as the dependent variable, rather than openings, especially with the decline of these institutions after 2014
+-   ***Non-linear effects***: share of minority groups may have a non-linear impact on growth of education institutions
+-   ***Spatial dependence***: repeat analysis accounting for spatial dependence in the independent variables (share of minority populations) to account for inter-county commuting (e.g. SLX model)
+
