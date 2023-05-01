@@ -8,13 +8,12 @@ pacman::p_load(tidyr)
 pacman::p_load(readxl)
 pacman::p_load(stringr)
 pacman::p_load(gets)
-pacman::p_load(getspanel)
 pacman::p_load(here)
 pacman::p_load(ggplot2)
+pacman::p_load(devtools)
+devtools::install_github("moritzpschwarz/getspanel")
+library(getspanel)
 
 # call scripts
-# data assembly
-# source("01 Dataset_creation.R")
-
-# # analysis
-# source("02 Analysis.R")
+source(here("code", "functions", "identify_indicator_timings.R"))
+source(here("code", "functions", "plot_counterfactual.R"))

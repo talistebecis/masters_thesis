@@ -1,12 +1,15 @@
 # Packages ----------------------------------------------------------------
+rm(list=ls())
 
-pacman::p_load(getspanel)
-pacman::p_load(dplyr)
+library(getspanel)
+pacman::p_load(dplyr, data.table, ggplot2, ggpubr)
+
+# set up functions
+source(here("code", "functions", "identify_indicator_timings.R"))
+source(here("code", "functions", "plot_counterfactual.R"))
 
 
 # Setup -------------------------------------------------------
-
-rm(list=ls())
 set.seed(1230)
 
 #Group specification
@@ -33,7 +36,7 @@ data[, L1.lpop:=c(NA, lpop[-.N]), by="country"]
 data[, L1.lemissions_pc:=c(NA, lemissions_pc[-.N]), by="country"]
 
 #model (sample = EU15, p.value = 0.001)
-is <- isatpanel(
+waste <- isatpanel(
   data = data,
   formula = lemissions_pc ~ lgdp + lgdp_sq + lpop,
   index = c("country", "year"),
@@ -43,8 +46,8 @@ is <- isatpanel(
   t.pval=.05
 )
 
-plot_counterfactual(is)
-break_uncertainty(is, m = 15, interval = 0.99)
+waste_plot <- plot_counterfactualTT(waste,
+                                    title = "Incineration of waste")
 
 
 # Lime production (2.A.2) -------------------------------------------------
@@ -61,7 +64,7 @@ data[, L1.lpop:=c(NA, lpop[-.N]), by="country"]
 data[, L1.lemissions_pc:=c(NA, lemissions_pc[-.N]), by="country"]
 
 #model (sample = EU15, p.value = 0.001)
-is <- isatpanel(
+lime <- isatpanel(
   data = data,
   formula = lemissions_pc ~ lgdp + lgdp_sq + lpop,
   index = c("country", "year"),
@@ -71,8 +74,7 @@ is <- isatpanel(
   t.pval=.05
 )
 
-plot_counterfactual(is)
-break_uncertainty(is, m = 15, interval = 0.99)
+# lime_plot <- plotoutput # positive breaks removed manually
 
 
 # Petroleum refining (1.A.1.bc) -------------------------------------------
@@ -89,7 +91,7 @@ data[, L1.lpop:=c(NA, lpop[-.N]), by="country"]
 data[, L1.lemissions_pc:=c(NA, lemissions_pc[-.N]), by="country"]
 
 #model (sample = EU15, p.value = 0.001)
-is <- isatpanel(
+petrol <- isatpanel(
   data = data,
   formula = lemissions_pc ~ lgdp + lgdp_sq + lpop,
   index = c("country", "year"),
@@ -99,8 +101,9 @@ is <- isatpanel(
   t.pval=.05
 )
 
-plot_counterfactual(is)
-break_uncertainty(is, m = 15, interval = 0.99)
+petrol_plot <- plot_counterfactualTT(petrol,
+                                     title = "Petroleum refining")
+
 
 # Water-borne Navigation (1.A.3.d) ----------------------------------------
 
@@ -116,7 +119,7 @@ data[, L1.lpop:=c(NA, lpop[-.N]), by="country"]
 data[, L1.lemissions_pc:=c(NA, lemissions_pc[-.N]), by="country"]
 
 #model (sample = EU15, p.value = 0.001)
-is <- isatpanel(
+water <- isatpanel(
   data = data,
   formula = lemissions_pc ~ lgdp + lgdp_sq + lpop,
   index = c("country", "year"),
@@ -126,6 +129,40 @@ is <- isatpanel(
   t.pval=.05
 )
 
-plot_counterfactual(is)
-break_uncertainty(is, m = 15, interval = 0.99)
+water_plot <- plot_counterfactualTT(water,
+                                    title = "Water-borne navigation")
 
+
+
+# Complete plot -----------------------------------------------------------
+
+ggarrange(waste_plot, lime_plot, petrol_plot, water_plot,
+          ncol = 2, nrow = 2)
+
+
+# # Road Transportation (1.A.3.b_noRES) ----------------------------------------
+# 
+# data <- data_full %>% 
+#   filter(category == "1.A.3.b_noRES") %>% 
+#   select(-category)
+# 
+# # add lags
+# data <- as.data.table(data)
+# data[, L1.lemissions:=c(NA, lemissions[-.N]), by="country"]
+# data[, L1.lgdp:=c(NA, lgdp[-.N]), by="country"]
+# data[, L1.lpop:=c(NA, lpop[-.N]), by="country"]
+# data[, L1.lemissions_pc:=c(NA, lemissions_pc[-.N]), by="country"]
+# 
+# #model (sample = EU15, p.value = 0.001)
+# road <- isatpanel(
+#   data = data,
+#   formula = lemissions_pc ~ lgdp + lgdp_sq + lpop,
+#   index = c("country", "year"),
+#   effect = "twoways",
+#   iis = T,
+#   fesis = T, 
+#   t.pval=.05
+# )
+# 
+# plot_counterfactual(road)
+# break_uncertainty(road)

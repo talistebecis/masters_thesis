@@ -1,0 +1,118 @@
+---
+title: "Identifying effective climate policies in Austria: a reverse-causal analysis"
+author: "Talis Tebecis"
+date: "April 2023"
+output:
+  ioslides_presentation:
+    widescreen: yes
+    smaller: yes
+    transition: 0
+    slide_level: 3
+    css: custom.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+pacman::p_load(dplyr)
+pacman::p_load(tidyr)
+pacman::p_load(stringr)
+pacman::p_load(readxl)
+pacman::p_load(here)
+pacman::p_load(ggplot2, scales)
+```
+
+### Overview
+
+**Motivation**
+
+-   ***Personally***: renewable energy sector; environmental science; interest in climate policy
+-   ***A Climate Plan for Austria***: specific focus on Austria for the project
+-   ***Testing methodology***: application of methodology to sectors other than road transport emissions
+
+**Methodology**
+
+-   Replication of Koch et al. (2022)
+-   Reverse causal approach using GETS, for all Austrian sectors
+-   Samples: EU15 and EU31
+-   Target significance levels: 5%, 1% and 0.1%
+
+**Data**
+
+-   IEA-EDGAR CO2 emissions database (v7.0)
+-   1996-2021
+-   Updated from EDGAR v5.0 from the original paper (1996-2018)
+
+### Overview
+
+**Emissions breakdown in Austria**
+
+```{r, echo=FALSE, fig.cap="Emissions by sector in Austria", fig.height = 4.5, fig.width = 10}
+emissions_codes <- read.csv("Data/01 Source_data/IPCC 2006 Categories.csv") %>%
+  select(IPCC, IPCC_description) %>% 
+  mutate(IPCC_description = str_replace(IPCC_description, "Main Activity Electricity and Heat Production", "Electricity and Heat Production"),
+         IPCC_description = str_replace(IPCC_description, "Petroleum Refining - Manufacture of Solid Fuels and Other Energy Industries", "Petroleum Refining"),
+         IPCC_description = str_replace(IPCC_description, "Non-Energy Products from Fuels and Solvent Use", "Non-Energy Fuels"),
+         IPCC_description = str_replace(IPCC_description, "Incineration and Open Burning of Waste", "Incineration of Waste"),
+         IPCC_description = str_replace(IPCC_description, "Manufacturing Industries and Construction", "Manufacturing and Construction"),
+         IPCC_description = str_replace(IPCC_description, "Road Transportation no resuspension", "Road Transportation"))
+
+data <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022.csv") %>% 
+    filter(country == "Austria",
+           year >= 1995) %>% 
+  group_by(category) %>% 
+  summarise(total_emissions = sum(emissions)) %>% 
+  left_join(emissions_codes, by = c("category" = "IPCC")) %>% 
+  arrange(total_emissions)
+
+data %>% 
+    mutate(IPCC_description=factor(IPCC_description, IPCC_description)) %>%
+  ggplot(aes(x=IPCC_description, y=total_emissions)) +
+    geom_segment(aes(x=IPCC_description ,xend=IPCC_description, y=0, yend=total_emissions), color="grey") +
+    geom_point(size=3, color="#69b3a2") +
+    coord_flip() +
+    theme_bw() +
+    theme(
+      panel.grid.minor.y = element_blank(),
+      panel.grid.major.y = element_blank(),
+      legend.position="none") +
+    xlab("IPCC emissions category") +
+  ylab("Total emissions (kilotonnes carbon dioxide)")
+
+```
+
+### Key Results
+
+**Negative structural breaks in Austrian emissions**
+
+![](Data/03%20Output_data/results_summary.png){width="90%"}
+
+### Key Results
+
+**Log of emissions per capita for Austrian sectors and counterfactuals**
+
+![](Data/03%20Output_data/counterfactuals.png){width="95%"}
+
+### Key Results
+
+**Policy attribution to identified structural breaks**
+
+![](Data/03%20Output_data/policy_attribution.png){width="90%"}
+
+### Challenges and Future Opportunities
+
+**Challenges**
+
+-   Calculating confidence intervals (currently reviewing Hendry and Pretis, 2023)
+-   Slightly different results using EDGAR v5.0 compared to EDGAR v7.0 combined database
+-   Approach to identifying EU-wide policies
+-   Causal interpretation
+
+**Future Work**
+
+-   ***Role models***: look for most effective policies across Europe and highlight role model countries and policies. Focus on largest sectors
+-   ***Upward breaks***: investigate the causes of upward breaks
+-   ***Demand vs. supply***: Investigate the effectiveness of demand- vs. supply-side policies across Europe
+
+**Questions**
+
+-   Why a focus on road emissions? (More straightforward policy attribution? Relative volume of emissions?)
