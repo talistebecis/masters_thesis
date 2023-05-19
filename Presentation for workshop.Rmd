@@ -58,7 +58,7 @@ emissions_codes <- read.csv("Data/01 Source_data/IPCC 2006 Categories.csv") %>%
 
 data <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022.csv") %>% 
     filter(country == "Austria",
-           year >= 1995) %>% 
+           year == 2021) %>% 
   group_by(category) %>% 
   summarise(total_emissions = sum(emissions)) %>% 
   left_join(emissions_codes, by = c("category" = "IPCC")) %>% 
