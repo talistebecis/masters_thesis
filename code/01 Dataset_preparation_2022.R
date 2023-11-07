@@ -33,7 +33,7 @@ emissions_total <- read_excel("Data/01 Source_data/IEA_EDGAR_CO2_1970-2021.xlsx"
                        ifelse(Name=="Czech Republic","Czechia",Name))) %>%
   filter(Name %in% EU31,
          fossil_bio == "fossil") %>% 
-  pivot_longer(9:60, "year") %>%
+  pivot_longer(9:60, names_to = "year") %>%
   transmute(country=Name,
             year=as.numeric(str_remove(year, "Y_")),
             emissions=as.numeric(value),

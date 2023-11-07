@@ -43,7 +43,7 @@ data[, L1.lemissions_pc:=c(NA, lemissions_pc[-.N]), by="country"]
 #model (sample = EU15, p.value = 0.001)
 waste <- isatpanel(
   data = data,
-  formula = lemissions_pc ~ lgdp + lgdp_sq + lpop,
+  formula = lemissions ~ lgdp + lgdp_sq + lpop,
   index = c("country", "year"),
   effect = "twoways",
   iis = T,
@@ -71,7 +71,7 @@ data[, L1.lemissions_pc:=c(NA, lemissions_pc[-.N]), by="country"]
 #model (sample = EU15, p.value = 0.001)
 lime <- isatpanel(
   data = data,
-  formula = lemissions_pc ~ lgdp + lgdp_sq + lpop,
+  formula = lemissions ~ lgdp + lgdp_sq + lpop,
   index = c("country", "year"),
   effect = "twoways",
   iis = T,
@@ -98,7 +98,7 @@ data[, L1.lemissions_pc:=c(NA, lemissions_pc[-.N]), by="country"]
 #model (sample = EU15, p.value = 0.001)
 petrol <- isatpanel(
   data = data,
-  formula = lemissions_pc ~ lgdp + lgdp_sq + lpop,
+  formula = lemissions ~ lgdp + lgdp_sq + lpop,
   index = c("country", "year"),
   effect = "twoways",
   iis = T,
@@ -126,7 +126,7 @@ data[, L1.lemissions_pc:=c(NA, lemissions_pc[-.N]), by="country"]
 #model (sample = EU15, p.value = 0.001)
 water <- isatpanel(
   data = data,
-  formula = lemissions_pc ~ lgdp + lgdp_sq + lpop,
+  formula = lemissions ~ lgdp + lgdp_sq + lpop,
   index = c("country", "year"),
   effect = "twoways",
   iis = T,
@@ -165,7 +165,7 @@ data[, L1.lemissions_pc:=c(NA, lemissions_pc[-.N]), by="country"]
 #model (sample = EU15, p.value = 0.001)
 road <- isatpanel(
   data = data,
-  formula = lemissions_pc ~ lgdp + lgdp_sq + lpop,
+  formula = lemissions ~ lgdp + lgdp_sq + lpop,
   index = c("country", "year"),
   effect = "twoways",
   iis = T,
@@ -192,7 +192,7 @@ data[, L1.lemissions_pc:=c(NA, lemissions_pc[-.N]), by="country"]
 #model (sample = EU15, p.value = 0.001)
 electricity <- isatpanel(
   data = data,
-  formula = lemissions_pc ~ lgdp + lgdp_sq + lpop,
+  formula = lemissions ~ lgdp + lgdp_sq + lpop,
   index = c("country", "year"),
   effect = "twoways",
   iis = T,
@@ -219,7 +219,7 @@ data[, L1.lemissions_pc:=c(NA, lemissions_pc[-.N]), by="country"]
 #model (sample = EU15, p.value = 0.001)
 residential <- isatpanel(
   data = data,
-  formula = lemissions_pc ~ lgdp + lgdp_sq + lpop,
+  formula = lemissions ~ lgdp + lgdp_sq + lpop,
   index = c("country", "year"),
   effect = "twoways",
   iis = T,
@@ -246,7 +246,7 @@ data[, L1.lemissions_pc:=c(NA, lemissions_pc[-.N]), by="country"]
 #model (sample = EU15, p.value = 0.001)
 manufacturing <- isatpanel(
   data = data,
-  formula = lemissions_pc ~ lgdp + lgdp_sq + lpop,
+  formula = lemissions ~ lgdp + lgdp_sq + lpop,
   index = c("country", "year"),
   effect = "twoways",
   iis = T,
@@ -346,7 +346,6 @@ data2 <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022.csv") %>%
 
 # Level 3 -----------------------------------------------------------------
 
-
 emissions_codes <- read.csv("Data/01 Source_data/IPCC 2006 Categories.csv") %>%
   select(IPCC, IPCC_description) %>% 
   mutate(IPCC_description = str_replace(IPCC_description, "Main Activity Electricity and Heat Production", "Electricity & Heat Production"),
@@ -361,19 +360,14 @@ emissions_codes <- read.csv("Data/01 Source_data/IPCC 2006 Categories.csv") %>%
 data_full <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022.csv") %>%
   left_join(emissions_codes,
             by = c("category" = "IPCC")) %>%
-  filter(!is.na(lemissions_pc),
+  filter(!is.na(lemissions),
          year >= 1995)
 
-AUT_emissions_pc <- data_full %>%
-  filter(country == "Austria") %>%
-  group_by(year) %>%
-  summarise(tot_emissions_pc = sum(emissions_pc))
-
 ggplot(data = subset(data_full, country == "Austria")) +
-  geom_line(mapping = aes(x = year, y = emissions_pc*1000000)) +
+  geom_line(mapping = aes(x = year, y = emissions)) +
   facet_wrap(~ IPCC_description, scale = "free") +
   labs(x = "Year",
-       y = "Emissions per capita (kg carbon dioxide)") +
+       y = "Emissions (kilotonnes carbon dioxide)") +
   theme(axis.text = element_text(size = 6),
         strip.text = element_text(size = 7))
 
@@ -383,13 +377,13 @@ ggplot(data = subset(data_full, country == "Austria")) +
 data_full1 <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022_level2.csv") %>% 
   left_join(emissions_codes,
             by = c("category_name" = "IPCC_description")) %>% 
-  filter(!is.na(lemissions_pc))
+  filter(!is.na(lemissions))
 
 ggplot(data = subset(data_full1, country == "Austria")) +
-  geom_line(mapping = aes(x = year, y = emissions_pc*1000000)) +
+  geom_line(mapping = aes(x = year, y = emissions)) +
   facet_wrap(~ category_name, scale = "free") +
   labs(x = "Year",
-       y = "Emissions per capita (kg carbon dioxide)") +
+       y = "Emissions (kilotonnes carbon dioxide)") +
   theme(axis.text = element_text(size = 6),
         strip.text = element_text(size = 6))
 
@@ -401,10 +395,10 @@ data_full1 <- read.csv("Data/02 Intermediary_data/CO2DriversEU_dataset_2022_leve
   filter(!is.na(lemissions_pc))
 
 ggplot(data = subset(data_full1, country == "Austria")) +
-  geom_line(mapping = aes(x = year, y = emissions_pc*1000000)) +
+  geom_line(mapping = aes(x = year, y = emissions)) +
   facet_wrap(~ category_name, scale = "free") +
   labs(x = "Year",
-       y = "Emissions per capita (kg carbon dioxide)") +
+       y = "Emissions (kilotonnes carbon dioxide)") +
   theme(axis.text = element_text(size = 6),
         strip.text = element_text(size = 8))
 
